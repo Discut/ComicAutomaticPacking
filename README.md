@@ -1,0 +1,2 @@
+# ComicAutomaticPacking
+这个node模块用于tonquer/picacg-qt下载的漫画快速打包为CBZ
