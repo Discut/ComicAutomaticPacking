@@ -16,7 +16,8 @@ export namespace ComicType {
         ScanInformation?: string;
 
         pagesPath: string[];
-        iamgeType: ComicImageType
+        iamgeType: ComicImageType;
+        comicInfo?:string;
 
     }
     export type Comics = {

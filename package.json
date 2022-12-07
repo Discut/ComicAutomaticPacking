@@ -32,7 +32,9 @@
   },
   "homepage": "https://github.com/Discut/ComicAutomaticPacking#readme",
   "devDependencies": {
+    "@types/archiver": "^5.3.1",
     "@types/jest": "^29.2.4",
+    "@types/xml2js": "^0.4.11",
     "jest": "^29.3.1",
     "prettier": "^2.8.0",
     "ts-jest": "^29.0.3",
@@ -46,6 +48,8 @@
   },
   "dependencies": {
     "@l2studio/picacomic-api": "^0.1.13",
-    "single-line-log": "^1.1.2"
+    "archiver": "^5.3.1",
+    "single-line-log": "^1.1.2",
+    "xml2js": "^0.4.23"
   }
 }
