@@ -39,6 +39,8 @@ cap
 
 如果连接错误请试着配置代理。
 
+未在linux和mac上测试
+
 ## 感谢以下项目
   ### pica api
    [![Readme Card](https://github-readme-stats.vercel.app/api/pin/?username=l2studio&repo=picacomic-api)](https://github.com/l2studio/picacomic-api) 
