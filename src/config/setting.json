@@ -9,5 +9,6 @@
         "email": "your pica email",
         "password": "your pica password"
     },
-    "outputPath": "Z:\\comic\\h"
+    "outputPath": "Z:\\comic\\h",
+    "compressionLevel": 0
 }
