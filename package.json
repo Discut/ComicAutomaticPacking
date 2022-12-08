@@ -26,7 +26,7 @@
     "url": "git+https://github.com/Discut/ComicAutomaticPacking.git"
   },
   "author": "Discut",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/Discut/ComicAutomaticPacking/issues"
   },
