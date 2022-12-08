@@ -41,7 +41,7 @@ cap
 
 ## 感谢以下项目
   ### pica api
-   [![Readme Card](https://github-readme-stats.vercel.app/api/pin/?username=l2studio&repo=picacomic-api)](https://github.com/nagadomi/waifu2x) 
+   [![Readme Card](https://github-readme-stats.vercel.app/api/pin/?username=l2studio&repo=picacomic-api)](https://github.com/l2studio/picacomic-api) 
 
    和本项目所使用的所有仓库
 
