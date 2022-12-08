@@ -43,6 +43,9 @@ cap
   ### pica api
    [![Readme Card](https://github-readme-stats.vercel.app/api/pin/?username=l2studio&repo=picacomic-api)](https://github.com/l2studio/picacomic-api) 
 
+ ### tonquer/picacg-qt
+   [![Readme Card](https://github-readme-stats.vercel.app/api/pin/?username=tonquer&repo=picacg-qt)](https://github.com/tonquer/picacg-qt) 
+
    和本项目所使用的所有仓库
 
 ## 说明
