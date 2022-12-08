@@ -41,7 +41,7 @@ export const main = async (): Promise<void> => {
             });
         }
     });
-    console.log('---' + chalk['red']('[扫描文件]完成！') + '---\n');
+    console.log('---' + chalk['red']('[扫描文件]完成！') + '---');
     const b2 = new cliProgress.SingleBar({
         format: '获取信息 |' + colors.cyan('{bar}') + '| {percentage}% || {value}/{total} 漫画',
         barCompleteChar: '\u2588',
@@ -68,7 +68,7 @@ export const main = async (): Promise<void> => {
         b2.update(i + 1);
     }
     b2.stop();
-    console.log('---' + chalk['red']('[获取信息]完成！') + '---\n');
+    console.log('---' + chalk['red']('[获取信息]完成！') + '---');
     // 创建输出目录
     if (!fs.existsSync(path.join(setting.outputPath)))
         fs.mkdirSync(path.join(setting.outputPath));
@@ -80,16 +80,17 @@ export const main = async (): Promise<void> => {
         let comic = searcher.comics[i];
         for (let index = 0; index < comic.chapter.length; index++) {
             const chapter = comic.chapter[index];
-
-
+            const outputTitle =
+                "[" + (comic.title.length >= 10 ? (comic.title.substring(0, 7) + '...') : comic.title) + "]" +
+                "(" + (chapter.Title.length >= 8 ? (chapter.Title.substring(0, 5) + '...') : chapter.Title) + ")";
             const b3 = new cliProgress.SingleBar({
                 format: '打包漫画 |' + colors.cyan('{bar}') + '| {percentage}% || {value}/{total} 文件 || {title}',
                 barCompleteChar: '\u2588',
                 barIncompleteChar: '\u2591',
                 hideCursor: true
             });
-            b3.start(chapter.PageCount, 0, {
-                title: "正在压缩 [" + comic.title + "](" + chapter.Title + ")"
+            b3.start(chapter.PageCount + 1, 0, {
+                title: "正在压缩 " + outputTitle
             });
             let obj = {
                 ComicInfo: {
@@ -117,33 +118,27 @@ export const main = async (): Promise<void> => {
 
             const output = fs.createWriteStream(path.join(zipPath, chapter.Title + '(' + ComicType.ComicImageType[chapter.iamgeType] + ')' + ".cbz"));// 将压缩包保存到当前项目的目录下，并且压缩包名为test.zip
             const archive = archiver('zip', { zlib: { level: setting.compressionLevel } });// 设置压缩等级
+            archive.on("progress", progress => {
+                b3.increment({
+                    title: (progress.entries.processed == progress.entries.total ? "压缩完成" : "正在压缩") + outputTitle,
+                });
+            })
             // 第三步，建立管道连接
             archive.pipe(output);
             archive.append(xml, { name: "ComicInfo.xml" });
             for (let j = 0; j < chapter.pagesPath.length; j++) {
                 // 第四步，压缩指定文件
-                let stream = fs.createReadStream(chapter.pagesPath[j]);// 读取当前目录下的hello.txt
-                let paths = chapter.pagesPath[j].split("\\");
-                let imageName = paths[paths.length - 1]; //paths[paths.length - 2] + "." + paths[paths.length - 1];
+                let stream = fs.createReadStream(chapter.pagesPath[j]);// 读取图片
+                // let paths = chapter.pagesPath[j].split("\\");
+                // let imageName = paths[paths.length - 1]; 
                 // 可能会影响性能
-                archive.append(stream, { name: imageName });
-                b3.increment({
-                    title: "正在压缩 [" + comic.title + "](" + chapter.Title + ")"
-                });
+                archive.append(stream, { name: path.basename(chapter.pagesPath[j]) });
             }
             // 第五步，完成压缩
-            b3.update(chapter.pagesPath.length,
-                {
-                    title: "输出漫画 [" + comic.title + "](" + chapter.Title + ") 请稍后"
-                });
             await archive.finalize();
-            b3.update(chapter.pagesPath.length,
-                {
-                    title: "输出漫画 [" + comic.title + "](" + chapter.Title + ") 完成！！"
-                });
             b3.stop();
         }
     }
-    console.log('---' + chalk['red']('[打包漫画]完成！') + '---\n');
+    console.log('---' + chalk['red']('[打包漫画]完成！') + '---');
     console.log('漫画输出目录:' + setting.outputPath)
 }
