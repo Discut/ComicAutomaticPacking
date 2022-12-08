@@ -1,12 +1,49 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { CommandParser } from '../command/commandParser';
-export class Setting {
+export class Setting implements Record<string, any> {
     private _proxy: Proxy;
     private _timeout: string;
     private _isProxy: boolean;
     private _settingsPath: string;
     private _account: Account;
+    private _outputPath: string = "./";
+    private _compressionLevel: number = 0;
+
+    set compressionLevel(value: number) {
+        if (value < 0) value = 0;
+        else if (value > 9) value = 9;
+        this._compressionLevel = value;
+    }
+    get compressionLevel() { return this._compressionLevel; }
+    set outputPath(value: string) { this._outputPath = value; this.updateJson(); }
+    get outputPath() { return this._outputPath; }
+    set proxy(value: Proxy) {
+        this._proxy = value;
+        this.updateJson();
+    }
+
+    get proxy(): Proxy {
+        return this._proxy;
+    }
+
+    set timeout(value: string) {
+        this._timeout = value;
+        this.updateJson();
+    }
+    get timeout() {
+        return this._timeout;
+    }
+
+    set isProxy(value: boolean) {
+        this._isProxy = value;
+        this.updateJson();
+    }
+    get isProxy() {
+        return this._isProxy;
+    }
+    set account(account: Account) { this._account = account; }
+    get account() { return this._account; }
 
     private static _instance: Setting;
     private constructor() {
@@ -42,10 +79,12 @@ export class Setting {
             return;
         }
         let obj = JSON.parse(data);
-        this._proxy = obj['proxy'];
-        this._timeout = obj['timeout'];
-        this._isProxy = obj['isProxy'];
-        this._account = obj['account'];
+        this._proxy = obj['proxy'] ? obj['proxy'] : this._proxy;
+        this._timeout = obj['timeout'] ? obj['timeout'] : this._timeout;
+        this._isProxy = obj['isProxy'] ? obj['isProxy'] : this._isProxy;
+        this._account = obj['account'] ? obj['account'] : this._account;
+        this.outputPath = obj.outputPath ? obj.outputPath : this._outputPath;
+        this.compressionLevel = obj.compressionLevel ? obj.compressionLevel : this.compressionLevel;
     }
 
     public commandExcute(command: string): boolean {
@@ -65,38 +104,11 @@ export class Setting {
             isProxy: this._isProxy,
             proxy: this._proxy,
             account: this._account,
-        }
+            outputPath: this.outputPath,
+            compressionLevel: this.compressionLevel
+        };
         fs.writeFileSync(this._settingsPath, JSON.stringify(data));
     }
-
-
-
-    set proxy(value: Proxy) {
-        this._proxy = value;
-        this.updateJson();
-    }
-
-    get proxy(): Proxy {
-        return this._proxy;
-    }
-
-    set timeout(value: string) {
-        this._timeout = value;
-        this.updateJson();
-    }
-    get timeout() {
-        return this._timeout;
-    }
-
-    set isProxy(value: boolean) {
-        this._isProxy = value;
-        this.updateJson();
-    }
-    get isProxy() {
-        return this._isProxy;
-    }
-    set account(account: Account) { this._account = account; }
-    get account() { return this._account; }
 }
 
 type Proxy = {

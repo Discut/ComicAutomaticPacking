@@ -3,7 +3,7 @@ import * as path from 'path';
 import { ComicType } from '../type/Comic'
 
 interface ScanComicCallback {
-    (status: ScanComicStatu, comicCount: number, comics: ComicType.Comics[]): void
+    (status: ScanComicStatu, dirCount: number, comicCount: number, comics: ComicType.Comics[]): void
 }
 export enum ScanComicStatu {
     SCANNING,
@@ -19,6 +19,7 @@ export class SearchComics {
     private _path: string;
     private _comics: ComicType.Comics[];
     private _comicCount: number = 0;
+    private _dirCount: number = 0;
 
     get comicCount() { return this._comicCount };
     get comics() { return this._comics; }
@@ -32,7 +33,10 @@ export class SearchComics {
     public start(callback: ScanComicCallback, parentPath?: string) {
         if (parentPath)
             this._path = parentPath;
+        this._dirCount = fs.readdirSync(this._path).length;
+        callback(ScanComicStatu.START, this._dirCount, 0, [])
         this.readDirSync(this._path, callback);
+        callback(ScanComicStatu.END, this._dirCount, this._comicCount, this._comics);
     }
     private readDirSync(path: string, callback: ScanComicCallback, level: number = 1, imageType: ComicType.ComicImageType = ComicType.ComicImageType.ORIGINAL) {
         var pa = fs.readdirSync(path);
@@ -53,7 +57,7 @@ export class SearchComics {
                     if (element != "original")
                         type = ComicType.ComicImageType.WAIFU2X;
                 } else if (level == 3) {
-                    callback(this._comicCount == 0 ? ScanComicStatu.START : ScanComicStatu.SCANNING, this._comicCount, this._comics);
+                    callback(ScanComicStatu.SCANNING, this._dirCount, this._comicCount, this._comics);
                     const comicTitle = this._comics[this._comics.length - 1].title
                     this._comics[this._comics.length - 1].chapter.push({
                         Title: element,
@@ -84,7 +88,7 @@ export class SearchComics {
                 }
                 //console.log("file: " + path + "\\" + element);
             }
+            callback(ScanComicStatu.SCANNING, this._dirCount, this._comicCount, this._comics);
         }
-        callback(ScanComicStatu.END, this._comicCount, this._comics);
     }
 }
