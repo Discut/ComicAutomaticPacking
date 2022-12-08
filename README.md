@@ -17,7 +17,7 @@ or
 修改setting.json文件
 ```
 路径：
-%appdata%\npm\node_modules\@discut\comic_automatic_packing\src\config\setting.json
+%appdata%\npm\node_modules\@discut\comic_automatic_packing\lib\config\setting.json
 ```
 ![setting image](https://github.com/Discut/ComicAutomaticPacking/blob/main/image/setting%20v1.1.0.png?raw=true)
 
