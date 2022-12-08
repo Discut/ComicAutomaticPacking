@@ -5,5 +5,9 @@
     ],
     "rules": {
         "no-console": false
-    }
+    },
+    "comment-format": [
+        false,
+        "check-space"
+    ]
 }

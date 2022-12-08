@@ -6,7 +6,7 @@ import * as path from 'path';
 
 let client: PicaComicService;
 async function createClient(): Promise<PicaComicService> {
-    let settings: Setting = Setting.instance();
+    const settings: Setting = Setting.instance();
     const opt: {
         timeout: number,
         proxy?: {

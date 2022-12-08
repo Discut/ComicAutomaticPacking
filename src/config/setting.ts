@@ -73,12 +73,12 @@ export class Setting implements Record<string, any> {
             this._settingsPath = settingsPath = path.join(__dirname, 'setting.json');
         if (!fs.existsSync(settingsPath))
             return;
-        let data = fs.readFileSync(settingsPath, 'utf8');
+        const data = fs.readFileSync(settingsPath, 'utf8');
         if (!data) {
             console.log("Read json failed!");
             return;
         }
-        let obj = JSON.parse(data);
+        const obj = JSON.parse(data);
         this._proxy = obj['proxy'] ? obj['proxy'] : this._proxy;
         this._timeout = obj['timeout'] ? obj['timeout'] : this._timeout;
         this._isProxy = obj['isProxy'] ? obj['isProxy'] : this._isProxy;

@@ -7,10 +7,10 @@ import * as archiver from 'archiver';
 import * as fs from 'fs';
 import * as path from 'path';
 const chalk = require("chalk");
-const cliProgress = require('cli-progress');
+import cliProgress = require('cli-progress');
 
 // note: you have to install this dependency manually since it's not required by cli-progress
-const colors = require('ansi-colors');
+import colors = require('ansi-colors');
 
 var log = require('single-line-log').stdout;
 let blok: string;

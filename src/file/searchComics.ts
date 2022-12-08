@@ -12,9 +12,6 @@ export enum ScanComicStatu {
     ERROR
 }
 
-interface ISearchComics {
-}
-
 export class SearchComics {
     private _path: string;
     private _comics: ComicType.Comics[];
