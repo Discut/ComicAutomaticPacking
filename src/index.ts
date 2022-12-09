@@ -8,19 +8,20 @@ import * as fs from 'fs';
 import * as path from 'path';
 const chalk = require("chalk");
 import cliProgress = require('cli-progress');
+import { program } from 'commander';
 
-// note: you have to install this dependency manually since it's not required by cli-progress
 import colors = require('ansi-colors');
-
-var log = require('single-line-log').stdout;
-let blok: string;
+import { commandParser } from "./command/CommandParser";
 
 export const main = async (): Promise<void> => {
-    const argv: string[] = process.argv;
-    let setting: Setting = Setting.instance();
-    setting.init()
+    Setting.instance().init();
+    commandParser();
+    await boot(program.opts().scan);
+}
 
-    let searcher: SearchComics = new SearchComics(process.cwd());
+const boot = async (scanPath: string) => {
+    let setting: Setting = Setting.instance();
+    let searcher: SearchComics = new SearchComics(scanPath);
     const b1 = new cliProgress.SingleBar({
         format: '扫描文件 |' + colors.cyan('{bar}') + '| {percentage}% || {value}/{total} 文件夹 || 已扫描到漫画数: {comicCount}',
         barCompleteChar: '\u2588',

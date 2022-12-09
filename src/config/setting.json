@@ -1,1 +1,14 @@
-{"timeout":"5000","isProxy":false,"proxy":{"host":"127.0.0.1","port":7890},"account":{"email":"your pica email","password":"your pica password"},"outputPath":"Z:\\comic\\h","compressionLevel":0}
+{
+    "timeout": "5000",
+    "isProxy": false,
+    "proxy": {
+        "host": "127.0.0.1",
+        "port": 7890
+    },
+    "account": {
+        "email": "your pica email",
+        "password": "your pica password"
+    },
+    "outputPath": "Z:\\comic\\h",
+    "compressionLevel": 0
+}

@@ -1,6 +1,5 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { CommandParser } from '../command/commandParser';
 export class Setting implements Record<string, any> {
     private _proxy: Proxy;
     private _timeout: string;
@@ -14,6 +13,7 @@ export class Setting implements Record<string, any> {
         if (value < 0) value = 0;
         else if (value > 9) value = 9;
         this._compressionLevel = value;
+        this.updateJson();
     }
     get compressionLevel() { return this._compressionLevel; }
     set outputPath(value: string) { this._outputPath = value; this.updateJson(); }
@@ -42,7 +42,7 @@ export class Setting implements Record<string, any> {
     get isProxy() {
         return this._isProxy;
     }
-    set account(account: Account) { this._account = account; }
+    set account(account: Account) { this._account = account; this.updateJson(); }
     get account() { return this._account; }
 
     private static _instance: Setting;
@@ -87,24 +87,13 @@ export class Setting implements Record<string, any> {
         this.compressionLevel = obj.compressionLevel ? obj.compressionLevel : this.compressionLevel;
     }
 
-    public commandExcute(command: string): boolean {
-        // TODO
-        let parser: CommandParser = new CommandParser(command);
-        for (let index = 0; index < parser.command.arguments.length; index++) {
-            let element: string = parser.command.arguments[index];
-            //this[(element as string)]
-        }
-        parser.command.arguments
-        return false;
-    }
-
     private async updateJson() {
         let data = {
             timeout: this._timeout,
             isProxy: this._isProxy,
             proxy: this._proxy,
             account: this._account,
-            outputPath: this.outputPath,
+            outputPath: this._outputPath,
             compressionLevel: this.compressionLevel
         };
         fs.writeFileSync(this._settingsPath, JSON.stringify(data));
