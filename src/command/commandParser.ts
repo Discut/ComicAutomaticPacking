@@ -51,13 +51,12 @@ const initCommandParaser = () => {
             if (str.level != undefined)
                 if (isNaN(Number(str.level))) {
                     console.log("错误: 请输入正确的压缩等级。[0-9]");
-                    process.exit(-1);
                 } else if (Number(str.level) < 0 || Number(str.level) > 9) {
                     console.log("错误: 请输入正确的压缩等级。[0-9]");
-                    process.exit(-1);
                 } else {
                     settings.compressionLevel = Number(str.level);
                 }
+                process.exit(-1);
         });
 
     program.option('-o, --out <char>', 'Set dir of output.', settings.outputPath)

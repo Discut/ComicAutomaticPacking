@@ -12,13 +12,15 @@ import { program } from 'commander';
 
 import colors = require('ansi-colors');
 import { commandParser } from "./command/CommandParser";
-
+// 入口
 export const main = async (): Promise<void> => {
     Setting.instance().init();
     commandParser();
-    await boot(program.opts().scan);
+    // 判断参数是否被 commander 解析完成
+    if (program.args.length == 0)
+        await boot(program.opts().scan);
 }
-
+// 启动
 const boot = async (scanPath: string) => {
     let setting: Setting = Setting.instance();
     let searcher: SearchComics = new SearchComics(scanPath);
@@ -28,6 +30,7 @@ const boot = async (scanPath: string) => {
         barIncompleteChar: '\u2591',
         hideCursor: true
     });
+    // 开始扫描文件夹
     searcher.start((status: ScanComicStatu, dirCount: number, comicCount: number, comics: ComicType.Comics[]) => {
         if (status == ScanComicStatu.END) {
             b1.stop();
@@ -50,6 +53,7 @@ const boot = async (scanPath: string) => {
         hideCursor: true
     });
     b2.start(searcher.comics.length, 0);
+    // 循环获取信息
     for (let i = 0; i < searcher.comics.length; i++) {
         let comic = searcher.comics[i];
         if (comic.title) {
@@ -111,12 +115,12 @@ const boot = async (scanPath: string) => {
             };
             let xml = builder.buildObject(obj);
             chapter.comicInfo = xml;
-
+            // 生成压缩包路径
             const zipPath = path.join(setting.outputPath, comic.title)
             if (!fs.existsSync(zipPath)) {
                 fs.mkdirSync(zipPath);
             }
-
+            // 创建压缩包
             const output = fs.createWriteStream(path.join(zipPath, chapter.Title + '(' + ComicType.ComicImageType[chapter.iamgeType] + ')' + ".cbz"));// 将压缩包保存到当前项目的目录下，并且压缩包名为test.zip
             const archive = archiver('zip', { zlib: { level: setting.compressionLevel } });// 设置压缩等级
             archive.on("progress", progress => {
