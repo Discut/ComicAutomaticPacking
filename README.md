@@ -8,7 +8,7 @@
 
 ## 安装
 ```bash
-$ npm install --save @discut/comic_automatic_packing
+$ npm install -g @discut/comic_automatic_packing
 # or
 ...
 ```
