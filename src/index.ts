@@ -16,6 +16,7 @@ import { commandParser } from "./command/CommandParser";
 export const main = async (): Promise<void> => {
     Setting.instance().init();
     commandParser();
+    checkStatus();
     // 判断参数是否被 commander 解析完成
     if (program.args.length == 0)
         await boot(program.opts().scan);
@@ -146,4 +147,11 @@ const boot = async (scanPath: string) => {
     }
     console.log('---' + chalk['green']('[打包漫画]完成！') + '---');
     console.log('漫画输出目录:' + setting.outputPath)
+}
+// 检查配置是否正确
+const checkStatus = () => {
+    if (Setting.instance().account.email.length == 0) {
+        console.log(chalk['red']('错误: 请检查账户是否配置'));
+        process.exit(-1);
+    }
 }
