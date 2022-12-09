@@ -3,7 +3,6 @@ import { Setting } from "./config/setting";
 import { ScanComicStatu, SearchComics } from "./file/searchComics";
 import { ComicType } from "./type/Comic";
 import * as xml2js from 'xml2js';
-import * as archiver from 'archiver';
 import * as fs from 'fs';
 import * as path from 'path';
 const chalk = require("chalk");
@@ -12,6 +11,7 @@ import { program } from 'commander';
 
 import colors = require('ansi-colors');
 import { commandParser } from "./command/CommandParser";
+import { Archive, ArchiveProgressEventType } from "./file/comicArchiver";
 // 入口
 export const main = async (): Promise<void> => {
     Setting.instance().init();
@@ -89,15 +89,8 @@ const boot = async (scanPath: string) => {
             const outputTitle =
                 "[" + (comic.title.length >= 10 ? (comic.title.substring(0, 7) + '...') : comic.title) + "]" +
                 "(" + (chapter.Title.length >= 8 ? (chapter.Title.substring(0, 5) + '...') : chapter.Title) + ")";
-            const b3 = new cliProgress.SingleBar({
-                format: '打包漫画 |' + colors.cyan('{bar}') + '| {percentage}% || {value}/{total} 文件 || {title}',
-                barCompleteChar: '\u2588',
-                barIncompleteChar: '\u2591',
-                hideCursor: true
-            });
-            b3.start(chapter.PageCount + 1, 0, {
-                title: "正在压缩 " + outputTitle
-            });
+
+
             let obj = {
                 ComicInfo: {
                     $: { "xmlns:xsd": "http://www.w3.org/2001/XMLSchema", "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance" },
@@ -118,31 +111,28 @@ const boot = async (scanPath: string) => {
             chapter.comicInfo = xml;
             // 生成压缩包路径
             const zipPath = path.join(setting.outputPath, comic.title)
-            if (!fs.existsSync(zipPath)) {
-                fs.mkdirSync(zipPath);
-            }
-            // 创建压缩包
-            const output = fs.createWriteStream(path.join(zipPath, chapter.Title + '(' + ComicType.ComicImageType[chapter.iamgeType] + ')' + ".cbz"));// 将压缩包保存到当前项目的目录下，并且压缩包名为test.zip
-            const archive = archiver('zip', { zlib: { level: setting.compressionLevel } });// 设置压缩等级
-            archive.on("progress", progress => {
-                b3.increment({
-                    title: (progress.entries.processed == progress.entries.total ? "压缩完成" : "正在压缩") + outputTitle,
-                });
-            })
-            // 第三步，建立管道连接
-            archive.pipe(output);
-            archive.append(xml, { name: "ComicInfo.xml" });
-            for (let j = 0; j < chapter.pagesPath.length; j++) {
-                // 第四步，压缩指定文件
-                let stream = fs.createReadStream(chapter.pagesPath[j]);// 读取图片
-                // let paths = chapter.pagesPath[j].split("\\");
-                // let imageName = paths[paths.length - 1]; 
-                // 可能会影响性能
-                archive.append(stream, { name: path.basename(chapter.pagesPath[j]) });
-            }
-            // 第五步，完成压缩
-            await archive.finalize();
-            b3.stop();
+            if (!fs.existsSync(zipPath)) fs.mkdirSync(zipPath);
+            // 开始打包
+            const archiver = new Archive(chapter, zipPath, setting.compressionLevel);
+            const archiveProgress = new cliProgress.SingleBar({
+                format: '打包漫画 |' + colors.cyan('{bar}') + '| {percentage}% || {value}/{total} 文件 || {title}',
+                barCompleteChar: '\u2588',
+                barIncompleteChar: '\u2591',
+                hideCursor: true
+            });
+            await archiver.setProgressListener((type, p, t) => {
+                if (type == ArchiveProgressEventType.PROGRESSING) {
+                    archiveProgress.increment({
+                        title: (p == t ? "压缩完成" : "正在压缩") + outputTitle,
+                    });
+                }
+                else if (type == ArchiveProgressEventType.START) {
+                    archiveProgress.start(chapter.PageCount + 1, 0, {
+                        title: "正在压缩 " + outputTitle
+                    });
+                }
+            }).output();
+            archiveProgress.stop();
         }
     }
     console.log('---' + chalk['green']('[打包漫画]完成！') + '---');
