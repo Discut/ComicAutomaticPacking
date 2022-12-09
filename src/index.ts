@@ -42,7 +42,7 @@ const boot = async (scanPath: string) => {
             });
         }
     });
-    console.log('---' + chalk['red']('[扫描文件]完成！') + '---');
+    console.log('---' + chalk['green']('[扫描文件]完成！') + '---');
     const b2 = new cliProgress.SingleBar({
         format: '获取信息 |' + colors.cyan('{bar}') + '| {percentage}% || {value}/{total} 漫画',
         barCompleteChar: '\u2588',
@@ -69,7 +69,7 @@ const boot = async (scanPath: string) => {
         b2.update(i + 1);
     }
     b2.stop();
-    console.log('---' + chalk['red']('[获取信息]完成！') + '---');
+    console.log('---' + chalk['green']('[获取信息]完成！') + '---');
     // 创建输出目录
     if (!fs.existsSync(path.join(setting.outputPath)))
         fs.mkdirSync(path.join(setting.outputPath));
@@ -140,6 +140,6 @@ const boot = async (scanPath: string) => {
             b3.stop();
         }
     }
-    console.log('---' + chalk['red']('[打包漫画]完成！') + '---');
+    console.log('---' + chalk['green']('[打包漫画]完成！') + '---');
     console.log('漫画输出目录:' + setting.outputPath)
 }
