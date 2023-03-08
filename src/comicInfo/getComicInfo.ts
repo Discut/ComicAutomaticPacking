@@ -3,6 +3,11 @@ import { PicaComicAPI, PicaComicService } from '@l2studio/picacomic-api';
 import { Setting } from "../config/setting";
 import * as fs from 'fs';
 import * as path from 'path';
+import { ComicInfo, ComicEpisode } from '@l2studio/picacomic-api';
+type MangaInfo = {
+    info?: ComicInfo,
+    episodes?: ComicEpisode[]
+}
 
 let client: PicaComicService;
 async function createClient(): Promise<PicaComicService> {
@@ -37,13 +42,31 @@ async function createClient(): Promise<PicaComicService> {
     return client;
 }
 
-export const getComicInfo = async (keyword: string) => {
+export const getComicInfo = async (keyword: string): Promise<MangaInfo> => {
     const c: PicaComicService = client ? client : await createClient();
     const comis = await c.search({ keyword });
     if (comis.docs.length == 0) {
-        return;
+        return {};
     } else {
         const info = await c.fetchComic({ id: comis.docs[0]._id });
-        return info;
+        const episodes = await getComicEpisodes(comis.docs[0]._id, 1);
+        return { info, episodes };
     }
+}
+
+/**
+ * @function 获取漫画章节信息
+ * @param id 漫画id
+ * @param pageIndex 漫画章节分页索引值
+ * @return 漫画章节列表
+ */
+const getComicEpisodes: any = async (id: string, pageIndex = 1) => {
+    const epi = await client.fetchComicEpisodes({
+        comicId: id, page: pageIndex
+    });
+    let episodes = epi.docs;
+    if (epi.pages <= pageIndex)
+        return episodes;
+    else
+        return episodes.concat(await getComicEpisodes(id, pageIndex + 1));
 }

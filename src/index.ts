@@ -58,11 +58,25 @@ const boot = async (scanPath: string) => {
     for (let i = 0; i < searcher.comics.length; i++) {
         let comic = searcher.comics[i];
         if (comic.title) {
-            let comicInfo = await getComicInfo(comic.title);
+            let mangaInfo = await getComicInfo(comic.title);
+            let comicInfo = mangaInfo.info;
+            let episodes = mangaInfo.episodes;
+            // 反转章节顺序（获取的章节顺序是反的）
+            if (episodes) episodes.reverse();
             for (let index = 0; index < comic.chapter.length; index++) {
                 const chapter = comic.chapter[index];
                 chapter.Count = comicInfo?.epsCount ? comicInfo?.epsCount : comic.chapter.length;
+                // 查找当前章节属于第几章
                 chapter.Number = index + 1;
+                if (episodes)
+                    for (let i = 0; i < episodes.length; i++) {
+                        const element = episodes[i];
+                        if (element.title == chapter.Title) {
+                            chapter.Number = element.order;
+                            episodes.splice(i, 1);
+                            break;
+                        }
+                    }
                 chapter.Summary = comicInfo?.description ? comicInfo?.description : "";
                 chapter.Writer = comicInfo?.author ? comicInfo?.author : "";
                 chapter.Letterer = comicInfo?.chineseTeam ? comicInfo?.chineseTeam : "";
