@@ -105,6 +105,12 @@ const boot = async (scanPath: string) => {
                 "(" + (chapter.Title.length >= 8 ? (chapter.Title.substring(0, 5) + '...') : chapter.Title) + ")";
 
 
+            // 经过waifu2X的章节在tag处加入waifu2x的标签
+            let tags: string[] = [];
+            tags = tags.concat(chapter.Tags);
+            if (chapter.iamgeType === ComicType.ComicImageType.WAIFU2X)
+                tags = tags.concat(['Waifu2x'])
+
             let obj = {
                 ComicInfo: {
                     $: { "xmlns:xsd": "http://www.w3.org/2001/XMLSchema", "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance" },
@@ -117,7 +123,7 @@ const boot = async (scanPath: string) => {
                     Summary: chapter.Summary,
                     Writer: chapter.Writer,
                     Letterer: chapter.Letterer,
-                    Tags: chapter.Tags.toString(),
+                    Tags: tags.toString(),
                     PageCount: chapter.PageCount,
                 }
             };
@@ -151,7 +157,7 @@ const boot = async (scanPath: string) => {
     }
     console.log('---' + chalk['green']('[打包漫画]完成！') + '---');
     console.log('漫画输出目录:' + setting.outputPath)
- }
+}
 // 检查配置是否正确
 const checkStatus = () => {
     if (Setting.instance().account.email.length == 0) {
