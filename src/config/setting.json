@@ -10,5 +10,6 @@
         "password": "your pica password"
     },
     "outputPath": "Z:\\comic\\h",
-    "compressionLevel": 0
+    "compressionLevel": 0,
+    "picacg_qtPath":""
 }

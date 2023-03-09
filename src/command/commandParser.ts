@@ -24,13 +24,13 @@ const initCommandParaser = () => {
         .option('-h, --host <char>', 'Set host of proxy.', '127.0.0.1')
         .option('-p, --port <char>', 'Set port of proxy.', '7890')
         .action((str, options) => {
-            const settings: Setting = Setting.instance();
-            settings.proxy = {
+            const innerSettings: Setting = Setting.instance();
+            innerSettings.proxy = {
                 host: str.host,
                 port: str.port
             }
-            settings.isProxy = true;
-            process.exit(-1);
+            innerSettings.isProxy = true;
+            process.exit(0);
         });
 
     program.command('account')
@@ -42,13 +42,13 @@ const initCommandParaser = () => {
                 email: str.email,
                 password: str.pwd
             }
-            process.exit(-1);
+            process.exit(0);
         });
     program.command('compress')
         .description("Set compress info.")
         .requiredOption('-l, --level <number>', 'Set compression level.', '0')
         .action((str, options) => {
-            if (str.level != undefined)
+            if (str.level !== undefined)
                 if (isNaN(Number(str.level))) {
                     console.log("错误: 请输入正确的压缩等级。[0-9]");
                 } else if (Number(str.level) < 0 || Number(str.level) > 9) {
@@ -56,19 +56,31 @@ const initCommandParaser = () => {
                 } else {
                     settings.compressionLevel = Number(str.level);
                 }
-                process.exit(-1);
+            process.exit(0);
+        });
+
+    program.command('picacg-qt')
+        .description("Set data path of the picacg-qt.")
+        .requiredOption('-d, --data <string>', 'Set data path of the picacg-qt.', '')
+        .action((str, options) => {
+            if (str.data !== undefined)
+                settings.picacg_qtPath = str.data;
+            process.exit(0);
         });
 
     program.option('-o, --out <char>', 'Set dir of output.', settings.outputPath)
         .action((str, options) => {
             if (!fs.existsSync(str.out)) {
                 console.log("错误: 输出目录不存在");
-                process.exit(-1);
+                process.exit(0);
             } else {
                 settings.outputPath = path.resolve(str.out);
             }
         });
 
     program.option('-s, --scan <char>', 'Set dir of scan.', process.cwd());
+
+
+
     program.parse();
 }

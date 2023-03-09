@@ -41,6 +41,8 @@ $ cap proxy -h [代理主机] -p [端口号]
 
 $ cap compress -l [压缩等级]
 
+$ cap picacg-qt -d [picacg-qt应用根目录]
+
 # 更多帮助请使用-h 查看， 例如
 $ cap -h
 
@@ -53,7 +55,7 @@ $ cap account -h
 路径：
 %appdata%\npm\node_modules\@discut\comic_automatic_packing\lib\config\setting.json
 ```
-![setting image](https://github.com/Discut/ComicAutomaticPacking/blob/main/image/setting%20v1.1.0.png?raw=true)
+![setting image](https://github.com/Discut/ComicAutomaticPacking/blob/main/image/setting%20v1.2.4.png?raw=true)
 
 | 字段                       | 说明              |
 | ------------------------- | ---------------- |
@@ -62,6 +64,7 @@ $ cap account -h
 | proxy                     | 代理设置         |
 | account（重要！必须配置） | pica账号配置     |
 | outputPath                | 打包漫画输出目录 |
+| picacg_qtPath             | picacg-qt应用根目录 |
 
 ## 感谢以下项目
   ### pica api
