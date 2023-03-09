@@ -64,7 +64,7 @@ const boot = async (scanPath: string) => {
             // 反转章节顺序（获取的章节顺序是反的）
             if (episodes) episodes.reverse();
             for (let index = 0; index < comic.chapter.length; index++) {
-                const chapter = comic.chapter[index];
+                let chapter = comic.chapter[index];
                 chapter.Count = comicInfo?.epsCount ? comicInfo?.epsCount : comic.chapter.length;
                 // 查找当前章节属于第几章
                 chapter.Number = index + 1;
@@ -73,7 +73,7 @@ const boot = async (scanPath: string) => {
                         const element = episodes[i];
                         if (element.title == chapter.Title) {
                             chapter.Number = element.order;
-                            episodes.splice(i, 1);
+                            // episodes.splice(i, 1);
                             break;
                         }
                     }
