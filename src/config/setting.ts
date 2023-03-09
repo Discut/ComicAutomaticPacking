@@ -8,6 +8,17 @@ export class Setting implements Record<string, any> {
     private _account: Account;
     private _outputPath: string = "./";
     private _compressionLevel: number = 0;
+    // picacg_qt应用的路径
+    private _picacg_qtPath = "";
+
+    set picacg_qtPath(value: string) {
+        if (value) this._picacg_qtPath = value;
+        this.updateJson();
+    }
+
+    get picacg_qtPath() {
+        return this._picacg_qtPath;
+    }
 
     set compressionLevel(value: number) {
         if (value < 0) value = 0;
@@ -85,6 +96,7 @@ export class Setting implements Record<string, any> {
         this._account = obj['account'] ? obj['account'] : this._account;
         this.outputPath = obj.outputPath ? obj.outputPath : this._outputPath;
         this.compressionLevel = obj.compressionLevel ? obj.compressionLevel : this.compressionLevel;
+        this._picacg_qtPath = obj.picacg_qtPath ? obj.picacg_qtPath : this._picacg_qtPath;
     }
 
     private async updateJson() {
@@ -94,7 +106,8 @@ export class Setting implements Record<string, any> {
             proxy: this._proxy,
             account: this._account,
             outputPath: this._outputPath,
-            compressionLevel: this.compressionLevel
+            compressionLevel: this.compressionLevel,
+            picacg_qtPath: this.picacg_qtPath
         };
         fs.writeFileSync(this._settingsPath, JSON.stringify(data));
     }
