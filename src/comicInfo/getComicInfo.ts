@@ -4,6 +4,8 @@ import { Setting } from "../config/setting";
 import * as fs from 'fs';
 import * as path from 'path';
 import { ComicInfo, ComicEpisode } from '@l2studio/picacomic-api';
+import { queryComic } from './db/queryDb';
+import { ComicDbInfo, ComicType } from '../type/Comic';
 type MangaInfo = {
     info?: ComicInfo,
     episodes?: ComicEpisode[]
@@ -34,24 +36,37 @@ async function createClient(): Promise<PicaComicService> {
         token: fs.readFileSync(tokenFile, 'utf8'),
         ...opt,
         onReauthorizationToken(token) {
-            //console.log('New token:', token)
+            // console.log('New token:', token)
             fs.writeFileSync(tokenFile, token) // Update persistent token
-            //getComicInfo.prototype.token = token;
+            // getComicInfo.prototype.token = token;
         }
     });
     return client;
 }
 
-export const getComicInfo = async (keyword: string): Promise<MangaInfo> => {
+export const getComicInfo = async (comic: ComicType.Comics): Promise<MangaInfo> => {
     const c: PicaComicService = client ? client : await createClient();
-    const comis = await c.search({ keyword });
-    if (comis.docs.length == 0) {
-        return {};
+    let comicId: string = "";
+    const keyword = comic.title;
+    let comics: ComicDbInfo[] = await queryComic(keyword);
+    // 数据库中无法找到
+    if (comics.length == 0) {
+        const comis = await c.search({ keyword });
+        if (comis.docs.length === 0)
+            return {};
+        else
+            comicId = comis.docs[0]._id;
     } else {
-        const info = await c.fetchComic({ id: comis.docs[0]._id });
-        const episodes = await getComicEpisodes(comis.docs[0]._id, 1);
-        return { info, episodes };
+        let which = comics[0];
+        comics.forEach(el => {
+            if (Math.abs(el.episodeCount - comic.chapter.length) <= Math.abs(which.episodeCount - comic.chapter.length))
+                which = el;
+        })
+        comicId = which.id;
     }
+    const info = await c.fetchComic({ id: comicId });
+    const episodes = await getComicEpisodes(comicId, 1);
+    return { info, episodes };
 }
 
 /**
@@ -64,7 +79,7 @@ const getComicEpisodes: any = async (id: string, pageIndex = 1) => {
     const epi = await client.fetchComicEpisodes({
         comicId: id, page: pageIndex
     });
-    let episodes = epi.docs;
+    const episodes = epi.docs;
     if (epi.pages <= pageIndex)
         return episodes;
     else

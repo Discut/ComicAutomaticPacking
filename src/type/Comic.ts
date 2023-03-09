@@ -17,7 +17,7 @@ export namespace ComicType {
 
         pagesPath: string[];
         iamgeType: ComicImageType;
-        comicInfo?:string;
+        comicInfo?: string;
 
     }
     export type Comics = {
@@ -29,4 +29,10 @@ export namespace ComicType {
         ORIGINAL,
         WAIFU2X
     }
+}
+
+export type ComicDbInfo = {
+    id: string,
+    title: string,
+    episodeCount: number
 }

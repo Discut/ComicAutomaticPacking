@@ -58,7 +58,7 @@ const boot = async (scanPath: string) => {
     for (let i = 0; i < searcher.comics.length; i++) {
         let comic = searcher.comics[i];
         if (comic.title) {
-            let mangaInfo = await getComicInfo(comic.title);
+            let mangaInfo = await getComicInfo(comic);
             let comicInfo = mangaInfo.info;
             let episodes = mangaInfo.episodes;
             // 反转章节顺序（获取的章节顺序是反的）
@@ -151,7 +151,7 @@ const boot = async (scanPath: string) => {
     }
     console.log('---' + chalk['green']('[打包漫画]完成！') + '---');
     console.log('漫画输出目录:' + setting.outputPath)
-}
+ }
 // 检查配置是否正确
 const checkStatus = () => {
     if (Setting.instance().account.email.length == 0) {
